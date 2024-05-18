@@ -63,29 +63,34 @@ def generate_result(prediction):
 	    	""")
 
 if submit:
-	try:
-		# save image on that directory
-		save_img("test_image.png", img_array)
+    try:
+        # save image on that directory
+        save_img("test_image.png", img_array)
 
-		image_path = "test_image.png"
-		# Predicting
-		st.write("👁Loading...")
+        image_path = "test_image.png"
+        st.write("Image saved successfully:", image_path)  # Debug: Print image path
+        
+        # Predicting
+        st.write("👁Loading...")
 
-		model_path_h5 = "model.h5"
-		model_path_json = "model.json"
-		json_file = open(model_path_json, 'r')
-		loaded_model_json = json_file.read()
-		json_file.close()
-		loaded_model = model_from_json(loaded_model_json)
-		loaded_model.load_weights(model_path_h5)
+        model_path_h5 = "model.h5"
+        model_path_json = "model.json"
+        st.write("Model paths:", model_path_h5, model_path_json)  # Debug: Print model paths
+        
+        json_file = open(model_path_json, 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        st.write("Model JSON:", loaded_model_json)  # Debug: Print loaded model JSON
+        
+        loaded_model = model_from_json(loaded_model_json)
+        loaded_model.load_weights(model_path_h5)
 
-		loaded_model.compile(loss='binary_crossentropy', metrics=['accuracy'],optimizer='adam')
+        loaded_model.compile(loss='binary_crossentropy', metrics=['accuracy'], optimizer='adam')
 
-		prediction = processing(image_path)
+        prediction = processing(image_path)
+        st.write("Prediction:", prediction)  # Debug: Print prediction result
+        
+        generate_result(prediction)
 
-		generate_result(prediction)
-
-	except:
-		st.write("""
-		### ❗ Oops... Something Is Going Wrong
-			""")
+    except Exception as e:
+        st.error(f"Error occurred: {str(e)}")
