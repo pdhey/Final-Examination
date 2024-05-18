@@ -12,7 +12,7 @@ import tensorflow as tf
 
 @st.cache_data(allow_output_mutation=True)
 def load_model():
-  model=tf.keras.models.load_model('cats_and_dogs_small_4.h5')
+  model=tf.keras.models.load_model('model.h5')
   return model
 model=load_model()
 st.write("""
