@@ -16,8 +16,7 @@ Cat 🐱 Or Dog 🐶 Recognizer
 
 #================================= Title Image ===========================
 st.text("""""")
-img_path_list = ["static/image_1.jpg",
-				"static/image_2.jpg"]
+img_path_list = ["image_2.jpg"]
 index = random.choice([0,1])
 image = Image.open(img_path_list[index])
 st.image(
@@ -130,8 +129,8 @@ if submit:
 		# Predicting
 		st.write("👁️ Predicting...")
 
-		model_path_h5 = "model/model.h5"
-		model_path_json = "model/model.json"
+		model_path_h5 = "model.h5"
+		model_path_json = "model.json"
 		json_file = open(model_path_json, 'r')
 		loaded_model_json = json_file.read()
 		json_file.close()
