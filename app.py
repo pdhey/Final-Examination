@@ -28,6 +28,14 @@ try:
 	        use_column_width=True
 	    )
 
+	st.write("""
+		**Just Click The Button! 😄**
+		""")
+except:
+	st.write("""
+		### ❗ Any Picture hasn't selected yet!!!
+		""")
+
 st.text("""""")
 submit = st.button("DOG or CAT")
 
