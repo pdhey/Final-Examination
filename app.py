@@ -27,22 +27,10 @@ try:
 	        image,
 	        use_column_width=True
 	    )
-	st.write("""
-		Now, you are just one step ahead of prediction.
-		""")
-	st.write("""
-		**Just Click The '👉🏼 Predict' Button To See The Prediction Corresponding To This Image! 😄**
-		""")
-except:
-	st.write("""
-		### ❗ Any Picture hasn't selected yet!!!
-		""")
 
-#================================= Predict Button ============================
 st.text("""""")
-submit = st.button("👉🏼 Predict")
+submit = st.button("DOG or CAT")
 
-#==================================== Model ==================================
 def processing(testing_image_path):
     IMG_SIZE = 50
     img = load_img(testing_image_path, 
@@ -55,26 +43,25 @@ def processing(testing_image_path):
 
 def generate_result(prediction):
 	st.write("""
-	## 🎯 RESULT
+	## RESULT
 		""")
 	if prediction[0]<0.5:
 	    st.write("""
-	    	## Model predicts it as an image of a CAT 🐱!!!
+	    	## It's a CAT 🐱!!!
 	    	""")
 	else:
 	    st.write("""
-	    	## Model predicts it as an image of a DOG 🐶!!!
+	    	## It's a DOG 🐶!!!
 	    	""")
 
-#=========================== Predict Button Clicked ==========================
 if submit:
 	try:
 		# save image on that directory
-		save_img("temp_dir/test_image.png", img_array)
+		save_img("test_image.png", img_array)
 
-		image_path = "temp_dir/test_image.png"
+		image_path = "test_image.png"
 		# Predicting
-		st.write("👁️ Predicting...")
+		st.write("👁Loading...")
 
 		model_path_h5 = "model.h5"
 		model_path_json = "model.json"
