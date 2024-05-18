@@ -33,7 +33,7 @@ try:
 		""")
 except:
 	st.write("""
-		### ❗ Any Picture hasn't selected yet!!!
+		### Select a picture! 
 		""")
 
 st.text("""""")
