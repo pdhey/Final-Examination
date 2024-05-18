@@ -1,97 +1,41 @@
 import streamlit as st
-import tensorflow
-from PIL import Image
-from tensorflow.keras.preprocessing.image import load_img, img_to_array, save_img
-from tensorflow.keras.models import model_from_json
+import tensorflow as tf
+from PIL import Image, ImageOps
 import numpy as np
-import shutil
 
-import os # inbuilt module
-import random # inbuilt module
-import webbrowser # inbuilt module
+# Load the model
+@st.cache_data
+def load_model():
+    model = tf.keras.models.load_model('model.h5')
+    return model
 
+model = load_model()
 
-st.title("""
-Cat 🐱 Or Dog 🐶?
-	""")
-
-img_file_buffer = st.file_uploader("Upload an image: ")
-
-try:
-	image = Image.open(img_file_buffer)
-	img_array = np.array(image)
-	st.write("""
-		Preview 👀 Of Given Image!
-		""")
-	if image is not None:
-	    st.image(
-	        image,
-	        use_column_width=True
-	    )
-
-	st.write("""
-		*Just Click The Button! 😄*
-		""")
-except:
-	st.write("""
-		### ❗ Any Picture hasn't selected yet!!!
-		""")
-
-st.text("""""")
-submit = st.button("DOG or CAT")
-
-def processing(testing_image_path):
-    IMG_SIZE = 50
-    img = load_img(testing_image_path, 
-            target_size=(IMG_SIZE, IMG_SIZE), color_mode="grayscale")
-    img_array = img_to_array(img)
-    img_array = img_array/255.0
-    img_array = img_array.reshape((1, 50, 50, 1))   
-    prediction =loaded_model.predict(img_array)    
+# Function to preprocess and make predictions
+def import_and_predict(image_data, model):
+    size = (64, 64)
+    image = ImageOps.fit(image_data, size, Image.LANCZOS)
+    img = np.asarray(image)
+    img = img.astype('float32') / 255.0  # Normalize pixel values
+    img_reshape = np.expand_dims(img, axis=0)  # Add batch dimension
+    prediction = model.predict(img_reshape)
     return prediction
 
-def generate_result(prediction):
-	st.write("""
-	## RESULT
-		""")
-	if prediction[0]<0.5:
-	    st.write("""
-	    	## It's a CAT 🐱!!!
-	    	""")
-	else:
-	    st.write("""
-	    	## It's a DOG 🐶!!!
-	    	""")
+# Main Streamlit app code
+st.write("""# Dog vs Cat Classification""")
+file = st.file_uploader("Choose a photo from computer", type=["jpg", "png"])
 
-if submit:
+if file is None:
+    st.text("Please upload an image file")
+else:
+    image = Image.open(file)
+    st.image(image, use_column_width=True)
+    
+    # Error handling for prediction
     try:
-        # save image on that directory
-        save_img("test_image.png", img_array)
-
-        image_path = "test_image.png"
-        st.write("Image saved successfully:", image_path)  # Debug: Print image path
-        
-        # Predicting
-        st.write("👁Loading...")
-
-        model_path_h5 = "model.h5"
-        model_path_json = "model.json"
-        st.write("Model paths:", model_path_h5, model_path_json)  # Debug: Print model paths
-        
-        json_file = open(model_path_json, 'r')
-        loaded_model_json = json_file.read()
-        json_file.close()
-        st.write("Model JSON:", loaded_model_json)  # Debug: Print loaded model JSON
-        
-        loaded_model = model_from_json(loaded_model_json)
-        loaded_model.load_weights(model_path_h5)
-
-        loaded_model.compile(loss='binary_crossentropy', metrics=['accuracy'], optimizer='adam')
-
-        prediction = processing(image_path)
-        st.write("Prediction:", prediction)  # Debug: Print prediction result
-        
-        generate_result(prediction)
-
+        prediction = import_and_predict(image, model)
+        class_names = ['Dog', 'Cat']
+        string = "OUTPUT : " + class_names[np.argmax(prediction)]
+        st.success(string)
     except Exception as e:
-        st.error(f"Error occurred: {str(e)}")
+        st.error("Error making prediction: {}".format(e))
